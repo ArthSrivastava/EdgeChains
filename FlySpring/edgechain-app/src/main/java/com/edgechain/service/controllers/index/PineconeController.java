@@ -2,7 +2,7 @@ package com.edgechain.service.controllers.index;
 
 import com.edgechain.lib.configuration.WebConfiguration;
 import com.edgechain.lib.embeddings.WordEmbeddings;
-import com.edgechain.lib.endpoint.impl.PineconeEndpoint;
+import com.edgechain.lib.endpoint.impl.index.PineconeEndpoint;
 import com.edgechain.lib.index.client.impl.PineconeClient;
 import com.edgechain.lib.response.StringResponse;
 import io.reactivex.rxjava3.core.Single;

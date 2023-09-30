@@ -1,12 +1,25 @@
-package com.edgechain.lib.endpoint;
+package com.edgechain.lib.endpoint.impl.embeddings;
 
 import com.edgechain.lib.embeddings.WordEmbeddings;
+import com.edgechain.lib.endpoint.Endpoint;
 import com.edgechain.lib.request.ArkRequest;
 import com.edgechain.lib.rxjava.retry.RetryPolicy;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.reactivex.rxjava3.core.Observable;
 
-public abstract class EmbeddingEndpoint extends Endpoint {
+import java.io.Serializable;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = OpenAiEmbeddingEndpoint.class, name = "type1"),
+  @JsonSubTypes.Type(value = MiniLMEndpoint.class, name = "type2"),
+  @JsonSubTypes.Type(value = BgeSmallEndpoint.class, name = "type3"),
+})
+public abstract class EmbeddingEndpoint extends Endpoint implements Serializable {
+
+  private static final long serialVersionUID = 4201794264326630184L;
+  private String callIdentifier;
   private String rawText;
 
   public EmbeddingEndpoint() {}
@@ -37,7 +50,15 @@ public abstract class EmbeddingEndpoint extends Endpoint {
     this.rawText = rawText;
   }
 
+  public void setCallIdentifier(String callIdentifier) {
+    this.callIdentifier = callIdentifier;
+  }
+
   public String getRawText() {
     return rawText;
+  }
+
+  public String getCallIdentifier() {
+    return callIdentifier;
   }
 }

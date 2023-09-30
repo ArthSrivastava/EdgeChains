@@ -3,7 +3,8 @@ package com.edgechain.service.controllers.openai;
 import com.edgechain.lib.configuration.WebConfiguration;
 import com.edgechain.lib.embeddings.request.OpenAiEmbeddingRequest;
 import com.edgechain.lib.embeddings.response.OpenAiEmbeddingResponse;
-import com.edgechain.lib.endpoint.impl.OpenAiEndpoint;
+import com.edgechain.lib.endpoint.impl.embeddings.OpenAiEmbeddingEndpoint;
+import com.edgechain.lib.endpoint.impl.llm.OpenAiChatEndpoint;
 import com.edgechain.lib.logger.entities.ChatCompletionLog;
 import com.edgechain.lib.logger.entities.EmbeddingLog;
 import com.edgechain.lib.logger.entities.JsonnetLog;
@@ -50,7 +51,8 @@ public class OpenAiController {
   @Autowired private OpenAiClient openAiClient;
 
   @PostMapping(value = "/chat-completion")
-  public Single<ChatCompletionResponse> chatCompletion(@RequestBody OpenAiEndpoint openAiEndpoint) {
+  public Single<ChatCompletionResponse> chatCompletion(
+      @RequestBody OpenAiChatEndpoint openAiEndpoint) {
 
     ChatCompletionRequest chatCompletionRequest =
         ChatCompletionRequest.builder()
@@ -122,7 +124,7 @@ public class OpenAiController {
   @PostMapping(
       value = "/chat-completion-stream",
       consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public SseEmitter chatCompletionStream(@RequestBody OpenAiEndpoint openAiEndpoint) {
+  public SseEmitter chatCompletionStream(@RequestBody OpenAiChatEndpoint openAiEndpoint) {
 
     ChatCompletionRequest chatCompletionRequest =
         ChatCompletionRequest.builder()
@@ -248,11 +250,11 @@ public class OpenAiController {
   }
 
   @PostMapping("/completion")
-  public Single<CompletionResponse> completion(@RequestBody OpenAiEndpoint openAiEndpoint) {
+  public Single<CompletionResponse> completion(@RequestBody OpenAiChatEndpoint openAiEndpoint) {
 
     CompletionRequest completionRequest =
         CompletionRequest.builder()
-            .prompt(openAiEndpoint.getRawText())
+            .prompt(openAiEndpoint.getInput())
             .model(openAiEndpoint.getModel())
             .temperature(openAiEndpoint.getTemperature())
             .build();
@@ -264,8 +266,8 @@ public class OpenAiController {
   }
 
   @PostMapping("/embeddings")
-  public Single<OpenAiEmbeddingResponse> embeddings(@RequestBody OpenAiEndpoint openAiEndpoint)
-      throws SQLException {
+  public Single<OpenAiEmbeddingResponse> embeddings(
+      @RequestBody OpenAiEmbeddingEndpoint openAiEndpoint) throws SQLException {
 
     EdgeChain<OpenAiEmbeddingResponse> edgeChain =
         openAiClient.createEmbeddings(

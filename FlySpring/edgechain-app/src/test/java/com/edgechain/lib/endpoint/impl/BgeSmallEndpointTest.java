@@ -1,8 +1,10 @@
 package com.edgechain.lib.endpoint.impl;
 
 import com.edgechain.lib.configuration.domain.SecurityUUID;
+import com.edgechain.lib.endpoint.impl.embeddings.BgeSmallEndpoint;
 import com.edgechain.lib.retrofit.client.RetrofitClientInstance;
 import java.io.File;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;

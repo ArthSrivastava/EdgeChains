@@ -1,7 +1,6 @@
-package com.edgechain.lib.endpoint.impl;
+package com.edgechain.lib.endpoint.impl.embeddings;
 
 import com.edgechain.lib.embeddings.WordEmbeddings;
-import com.edgechain.lib.endpoint.EmbeddingEndpoint;
 import com.edgechain.lib.request.ArkRequest;
 import com.edgechain.lib.retrofit.BgeSmallService;
 import com.edgechain.lib.retrofit.client.RetrofitClientInstance;
@@ -15,6 +14,8 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
+
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +26,14 @@ public class BgeSmallEndpoint extends EmbeddingEndpoint {
   private final BgeSmallService bgeSmallService =
       RetrofitClientInstance.getInstance().create(BgeSmallService.class);
 
+  private ModelMapper modelMapper = new ModelMapper();
+
   private String modelUrl;
   private String tokenizerUrl;
 
-  private String callIdentifier;
-
   public static final String MODEL_FOLDER = "./model";
-  static final String MODEL_PATH = MODEL_FOLDER + "/model.onnx";
-  static final String TOKENIZER_PATH = MODEL_FOLDER + "/tokenizer.json";
+  public static final String MODEL_PATH = MODEL_FOLDER + "/model.onnx";
+  public static final String TOKENIZER_PATH = MODEL_FOLDER + "/tokenizer.json";
 
   public BgeSmallEndpoint() {}
 
@@ -69,8 +70,12 @@ public class BgeSmallEndpoint extends EmbeddingEndpoint {
     return tokenizerUrl;
   }
 
-  public String getCallIdentifier() {
-    return callIdentifier;
+  public void setModelUrl(String modelUrl) {
+    this.modelUrl = modelUrl;
+  }
+
+  public void setTokenizerUrl(String tokenizerUrl) {
+    this.tokenizerUrl = tokenizerUrl;
   }
 
   public BgeSmallEndpoint(RetryPolicy retryPolicy, String modelUrl, String tokenizerUrl) {
@@ -81,13 +86,14 @@ public class BgeSmallEndpoint extends EmbeddingEndpoint {
 
   @Override
   public Observable<WordEmbeddings> embeddings(String input, ArkRequest arkRequest) {
-    setRawText(input);
+    BgeSmallEndpoint mapper = modelMapper.map(this, BgeSmallEndpoint.class);
+    mapper.setRawText(input);
 
-    if (Objects.nonNull(arkRequest)) this.callIdentifier = arkRequest.getRequestURI();
-    else this.callIdentifier = "URI wasn't provided";
+    if (Objects.nonNull(arkRequest)) mapper.setCallIdentifier(arkRequest.getRequestURI());
+    else mapper.setCallIdentifier("URI wasn't provided");
 
     return Observable.fromSingle(
-        bgeSmallService.embeddings(this).map(m -> new WordEmbeddings(input, m.getEmbedding())));
+        bgeSmallService.embeddings(mapper).map(m -> new WordEmbeddings(input, m.getEmbedding())));
   }
 
   private void downloadFile(String urlStr, String path) {

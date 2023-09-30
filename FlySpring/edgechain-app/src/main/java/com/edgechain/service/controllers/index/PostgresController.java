@@ -1,7 +1,7 @@
 package com.edgechain.service.controllers.index;
 
 import com.edgechain.lib.configuration.WebConfiguration;
-import com.edgechain.lib.endpoint.impl.PostgresEndpoint;
+import com.edgechain.lib.endpoint.impl.index.PostgresEndpoint;
 import com.edgechain.lib.index.client.impl.PostgresClient;
 import com.edgechain.lib.index.domain.PostgresWordEmbeddings;
 import com.edgechain.lib.response.StringResponse;

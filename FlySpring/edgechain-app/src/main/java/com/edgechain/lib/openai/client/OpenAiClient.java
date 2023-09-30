@@ -3,7 +3,8 @@ package com.edgechain.lib.openai.client;
 import com.edgechain.lib.constants.EndpointConstants;
 import com.edgechain.lib.embeddings.request.OpenAiEmbeddingRequest;
 import com.edgechain.lib.embeddings.response.OpenAiEmbeddingResponse;
-import com.edgechain.lib.endpoint.impl.OpenAiEndpoint;
+import com.edgechain.lib.endpoint.impl.embeddings.OpenAiEmbeddingEndpoint;
+import com.edgechain.lib.endpoint.impl.llm.OpenAiChatEndpoint;
 import com.edgechain.lib.openai.request.ChatCompletionRequest;
 import com.edgechain.lib.openai.request.CompletionRequest;
 import com.edgechain.lib.openai.response.ChatCompletionResponse;
@@ -28,7 +29,7 @@ public class OpenAiClient {
   private final RestTemplate restTemplate = new RestTemplate();
 
   public EdgeChain<ChatCompletionResponse> createChatCompletion(
-      ChatCompletionRequest request, OpenAiEndpoint endpoint) {
+      ChatCompletionRequest request, OpenAiChatEndpoint endpoint) {
 
     return new EdgeChain<>(
         Observable.create(
@@ -65,7 +66,7 @@ public class OpenAiClient {
   }
 
   public EdgeChain<ChatCompletionResponse> createChatCompletionStream(
-      ChatCompletionRequest request, OpenAiEndpoint endpoint) {
+      ChatCompletionRequest request, OpenAiChatEndpoint endpoint) {
 
     try {
       logger.info("Logging ChatCompletion Stream....");
@@ -97,7 +98,7 @@ public class OpenAiClient {
   }
 
   public EdgeChain<CompletionResponse> createCompletion(
-      CompletionRequest request, OpenAiEndpoint endpoint) {
+      CompletionRequest request, OpenAiChatEndpoint endpoint) {
     return new EdgeChain<>(
         Observable.create(
             emitter -> {
@@ -124,7 +125,7 @@ public class OpenAiClient {
   }
 
   public EdgeChain<OpenAiEmbeddingResponse> createEmbeddings(
-      OpenAiEmbeddingRequest request, OpenAiEndpoint endpoint) {
+      OpenAiEmbeddingRequest request, OpenAiEmbeddingEndpoint endpoint) {
     return new EdgeChain<>(
         Observable.create(
             emitter -> {
